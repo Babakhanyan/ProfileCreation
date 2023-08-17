@@ -2,19 +2,21 @@ package com.example.profilecreation.ui.signUp
 
 import android.webkit.URLUtil
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.common.UIModel
 import com.example.common.dataOrNull
 import com.example.common.isValidEmail
 import com.example.data.UserService
 import com.example.domain.Portfolio
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class SignUpViewModel(
+@HiltViewModel
+class SignUpViewModel @Inject constructor(
     private val userService: UserService
 ) : ViewModel() {
 
@@ -114,13 +116,4 @@ sealed class ValidationError {
     object InvalidEmailAddress : ValidationError()
     object InvalidInvalidWebSite : ValidationError()
     object None : ValidationError()
-}
-
-@Suppress("UNCHECKED_CAST")
-class SignUpViewModelFactory(
-    private val userService: UserService,
-) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return SignUpViewModel(userService) as T
-    }
 }

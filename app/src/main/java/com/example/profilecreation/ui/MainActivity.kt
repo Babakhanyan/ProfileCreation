@@ -5,7 +5,9 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.profilecreation.R
 import com.example.profilecreation.ui.confirmation.ConfirmationFragment
 import com.example.profilecreation.ui.signUp.SignUpFragment
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {

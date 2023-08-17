@@ -17,20 +17,19 @@ import com.example.common.extenssion.collectWhileStarted
 import com.example.common.extenssion.hideKeyboard
 import com.example.common.extenssion.viewBinding
 import com.example.domain.Portfolio
-import com.example.profilecreation.App
 import com.example.profilecreation.R
 import com.example.profilecreation.databinding.FragmentConfirmationBinding
 import com.example.profilecreation.ui.MainActivity
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ConfirmationFragment : Fragment(R.layout.fragment_confirmation) {
 
     companion object {
         fun newInstance() = ConfirmationFragment()
     }
 
-    private val viewModel: ConfirmationViewModel by viewModels {
-        ConfirmationViewModel.ConfirmationViewModelFactory(App.instance.userService)
-    }
+    private val viewModel: ConfirmationViewModel by viewModels()
 
     private val binding by viewBinding(FragmentConfirmationBinding::bind)
 

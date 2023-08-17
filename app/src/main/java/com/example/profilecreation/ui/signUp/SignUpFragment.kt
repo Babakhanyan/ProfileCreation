@@ -21,18 +21,19 @@ import com.example.common.extenssion.collectWhileStarted
 import com.example.common.extenssion.viewBinding
 import com.example.common.showToolTip
 import com.example.domain.Portfolio
-import com.example.profilecreation.App
 import com.example.profilecreation.R
 import com.example.profilecreation.databinding.FragmentSignUpBinding
 import com.example.profilecreation.ui.MainActivity
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
 
     companion object {
         fun newInstance() = SignUpFragment()
     }
 
-    private val viewModel: SignUpViewModel by viewModels { SignUpViewModelFactory(App.instance.userService) }
+    private val viewModel: SignUpViewModel by viewModels()
 
     private val binding by viewBinding(FragmentSignUpBinding::bind)
 
