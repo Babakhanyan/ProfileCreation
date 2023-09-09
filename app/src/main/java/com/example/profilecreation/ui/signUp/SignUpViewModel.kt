@@ -69,10 +69,7 @@ class SignUpViewModel @Inject constructor(
     fun submit() {
         val data = _uiModel.value.dataOrNull() ?: return
         if (isPortfolioValid(data)) {
-            _uiModel.tryEmit(UIModel.Loading)
-
             viewModelScope.launch {
-                delay(1000)      // for imitation
                 userService.savePortfolio(data)
                 _command.trySend(Command.OpenConfirmationPage)
             }

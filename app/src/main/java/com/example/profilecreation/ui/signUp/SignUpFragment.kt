@@ -1,7 +1,6 @@
 package com.example.profilecreation.ui.signUp
 
 import android.content.ContentValues
-import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -12,6 +11,7 @@ import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.NavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
@@ -23,21 +23,18 @@ import com.example.common.showToolTip
 import com.example.domain.Portfolio
 import com.example.profilecreation.R
 import com.example.profilecreation.databinding.FragmentSignUpBinding
-import com.example.profilecreation.ui.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
 
-    companion object {
-        fun newInstance() = SignUpFragment()
-    }
+    @Inject
+    lateinit var navController: dagger.Lazy<NavController>
 
     private val viewModel: SignUpViewModel by viewModels()
 
     private val binding by viewBinding(FragmentSignUpBinding::bind)
-
-    private lateinit var mainActivity: MainActivity
 
     private lateinit var avatarUri: Uri
 
@@ -54,21 +51,16 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
             }
         }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        mainActivity = context as MainActivity
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        addOnBackPressedCallback(viewLifecycleOwner) { mainActivity.finish() }
+        addOnBackPressedCallback(viewLifecycleOwner) { requireActivity().finish() }
         prepareAvatarUri()
         initView()
         observeViewModel()
     }
 
     private fun prepareAvatarUri() {
-        avatarUri = mainActivity.contentResolver.insert(
+        avatarUri = requireActivity().contentResolver.insert(
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
             ContentValues()
         ) ?: error("Uri is null")
@@ -101,7 +93,7 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
             command.collectWhileStarted(viewLifecycleOwner) {
                 when (it) {
                     is Command.OpenConfirmationPage -> {
-                        mainActivity.openConfirmationFragment()
+                        navController.get().navigate(R.id.confirmationFragment)
                     }
                 }
             }

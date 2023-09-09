@@ -1,6 +1,5 @@
 package com.example.profilecreation.ui.confirmation
 
-import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -8,6 +7,7 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.NavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
@@ -19,32 +19,23 @@ import com.example.common.extenssion.viewBinding
 import com.example.domain.Portfolio
 import com.example.profilecreation.R
 import com.example.profilecreation.databinding.FragmentConfirmationBinding
-import com.example.profilecreation.ui.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class ConfirmationFragment : Fragment(R.layout.fragment_confirmation) {
 
-    companion object {
-        fun newInstance() = ConfirmationFragment()
-    }
+    @Inject
+    lateinit var navController: dagger.Lazy<NavController>
 
     private val viewModel: ConfirmationViewModel by viewModels()
 
     private val binding by viewBinding(FragmentConfirmationBinding::bind)
 
-    private lateinit var mainActivity: MainActivity
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        mainActivity = context as MainActivity
-    }
-
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         hideKeyboard()
-        addOnBackPressedCallback(viewLifecycleOwner) { mainActivity.openSignUpFragment() }
+        addOnBackPressedCallback(viewLifecycleOwner) { navController.get().popBackStack() }
         initView()
         observeViewModel()
     }
