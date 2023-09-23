@@ -5,15 +5,5 @@ data class Portfolio(
     val firstName: String,
     val emailAddress: String,
     val password: String,
-    val webSite: String,
-) {
-    companion object {
-        val empty = Portfolio(
-            avatarUri = "",
-            firstName = "",
-            emailAddress = "",
-            password = "",
-            webSite = ""
-        )
-    }
-}
+    val url: String,
+)

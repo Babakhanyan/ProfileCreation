@@ -15,7 +15,7 @@ internal class PortfolioMapperTest {
             firstName = "John",
             emailAddress = "John@gmail.com",
             password = "123456",
-            webSite = "http://www.google.com"
+            url = "http://www.google.com"
         )
         val expectedPortfolio = getFakePortfolio()
 
@@ -30,7 +30,7 @@ internal class PortfolioMapperTest {
             firstName = "John",
             emailAddress = "John@gmail.com",
             password = "123456",
-            webSite = "http://www.google.com"
+            url = "http://www.google.com"
         )
         val portfolio = getFakePortfolio()
 

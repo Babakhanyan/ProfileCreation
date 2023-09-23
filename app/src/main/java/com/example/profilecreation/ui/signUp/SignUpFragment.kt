@@ -7,20 +7,13 @@ import android.provider.MediaStore
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.view.isVisible
-import androidx.core.widget.doAfterTextChanged
+import androidx.compose.material3.MaterialTheme
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.bumptech.glide.request.RequestOptions
-import com.example.common.UIModel
 import com.example.common.extenssion.addOnBackPressedCallback
 import com.example.common.extenssion.collectWhileStarted
 import com.example.common.extenssion.viewBinding
-import com.example.common.showToolTip
-import com.example.domain.Portfolio
 import com.example.profilecreation.R
 import com.example.profilecreation.databinding.FragmentSignUpBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -53,10 +46,27 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.composeSignUpView.setContent {
+            MaterialTheme {
+                SignUpScreen(viewModel)
+            }
+        }
         addOnBackPressedCallback(viewLifecycleOwner) { requireActivity().finish() }
         prepareAvatarUri()
-        initView()
         observeViewModel()
+    }
+
+    private fun observeViewModel() {
+        with(viewModel) {
+            command.collectWhileStarted(viewLifecycleOwner) {
+                when (it) {
+                    is Command.OpenConfirmationPage -> {
+                        navController.get().navigate(R.id.confirmationFragment)
+                    }
+                    Command.OpenCamera -> takePicture.launch(avatarUri)
+                }
+            }
+        }
     }
 
     private fun prepareAvatarUri() {
@@ -64,112 +74,5 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
             ContentValues()
         ) ?: error("Uri is null")
-    }
-
-    private fun initView() {
-        with(binding) {
-            with(viewModel) {
-                firstNameEditText.doAfterTextChanged { updateFirstName(it.toString()) }
-                emailAddressEditText.doAfterTextChanged { updateEmailAddress(it.toString()) }
-                passwordEditText.doAfterTextChanged { updatePassword(it.toString()) }
-                websiteEditText.doAfterTextChanged { updateWebSite(it.toString()) }
-            }
-
-            avatarPlaceHolderTextView.setOnClickListener { takePicture.launch(avatarUri) }
-            submitButton.setOnClickListener { viewModel.submit() }
-        }
-    }
-
-    private fun observeViewModel() {
-        with(viewModel) {
-            uiModel.collectWhileStarted(viewLifecycleOwner) {
-                showProgress(it is UIModel.Loading)
-                when (it) {
-                    is UIModel.Data -> updateUi(it.data)
-                    else -> Unit
-                }
-            }
-            validationError.collectWhileStarted(viewLifecycleOwner) { showError(it) }
-            command.collectWhileStarted(viewLifecycleOwner) {
-                when (it) {
-                    is Command.OpenConfirmationPage -> {
-                        navController.get().navigate(R.id.confirmationFragment)
-                    }
-                }
-            }
-        }
-    }
-
-    private fun updateUi(data: Portfolio) {
-        with(binding) {
-            showAvatar(data.avatarUri)
-            if (firstNameEditText.text.toString() != data.firstName) {
-                firstNameEditText.setText(data.firstName)
-            }
-            if (emailAddressEditText.text.toString() != data.emailAddress) {
-                emailAddressEditText.setText(data.emailAddress)
-            }
-            if (passwordEditText.text.toString() != data.password) {
-                passwordEditText.setText(data.password)
-            }
-            if (websiteEditText.text.toString() != data.webSite) {
-                websiteEditText.setText(data.webSite)
-            }
-        }
-    }
-
-    private fun showAvatar(stringUri: String) {
-        if (stringUri.isEmpty()) return
-
-        with(binding) {
-            avatarImageView.isVisible = true
-            avatarPlaceHolderTextView.isVisible = false
-
-            Glide.with(requireActivity()).load(Uri.parse(stringUri)).fitCenter().apply(
-                RequestOptions.bitmapTransform(
-                    RoundedCorners(
-                        resources.getDimension(R.dimen.sign_up_avatar_placeholder_radius)
-                            .toInt()
-                    )
-                )
-            ).into(avatarImageView)
-        }
-    }
-
-    private fun showError(validationError: ValidationError) {
-        with(binding) {
-            val messageResId: Int
-            val view: View
-
-            when (validationError) {
-                ValidationError.InvalidEmailAddress -> {
-                    messageResId = R.string.error_email_address
-                    view = emailAddressEditText
-                }
-                ValidationError.InvalidInvalidWebSite -> {
-                    messageResId = R.string.error_website
-                    view = websiteEditText
-                }
-                ValidationError.RequiredEmailAddress -> {
-                    messageResId = R.string.error_required
-                    view = emailAddressEditText
-                }
-                ValidationError.RequiredPassword -> {
-                    messageResId = R.string.error_required
-                    view = passwordEditText
-                }
-                ValidationError.None -> return
-            }
-
-            view.setBackgroundResource(R.drawable.shape_edit_text_background_error)
-            showToolTip(requireContext(), view, getString(messageResId)) {
-                view.setBackgroundResource(R.drawable.shape_edit_text_background)
-            }
-        }
-    }
-
-    private fun showProgress(isVisible: Boolean) {
-        binding.progressBar.isVisible = isVisible
-        binding.disableView.isVisible = isVisible
     }
 }

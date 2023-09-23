@@ -11,7 +11,7 @@
     <string name="sign_up_placeholder_first_name">First Name</string>
     <string name="sign_up_placeholder_email_address">Email Address</string>
     <string name="sign_up_placeholder_password">Password</string>
-    <string name="sign_up_placeholder_website">Website</string>
+    <string name="sign_up_placeholder_url">Url</string>
 
     <!--  Confirmation texts  -->
     <string name="confirmation_title">Hello, %s!</string>
@@ -22,7 +22,7 @@
     <string name="error_required">Required</string>
     <string name="error_email_address">Invalid email address</string>
     <string name="error_password">Simply password</string>
-    <string name="error_website">Invalid website</string>
+    <string name="error_url">Invalid url</string>
     <string name="error_something_went_wrong">Something went wrong</string>
     <string name="camera_was_close">Camera was close</string>
 

@@ -5,7 +5,7 @@ data class PortfolioDto(
     val firstName: String,
     val emailAddress: String,
     val password: String,
-    val webSite: String,
+    val url: String,
 ) {
     companion object {
         val empty = PortfolioDto(
@@ -13,7 +13,7 @@ data class PortfolioDto(
             firstName = "",
             emailAddress = "",
             password = "",
-            webSite = ""
+            url = ""
         )
     }
 }
