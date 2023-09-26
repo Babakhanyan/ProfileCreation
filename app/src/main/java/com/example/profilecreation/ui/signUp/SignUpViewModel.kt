@@ -132,10 +132,6 @@ class SignUpViewModel @Inject constructor(
 
         return isPortfolioValid
     }
-
-    fun onAvatarClick() {
-        _command.trySend(Command.OpenCamera)
-    }
 }
 
 data class FieldState(
@@ -153,5 +149,4 @@ data class PortfolioUi(
 
 sealed class Command {
     object OpenConfirmationPage : Command()
-    object OpenCamera : Command()
 }

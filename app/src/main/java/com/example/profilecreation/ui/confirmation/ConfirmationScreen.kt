@@ -5,7 +5,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -15,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.common.UIModel
 import com.example.profilecreation.R
 import com.example.profilecreation.ui.composeable.ClickableLinkText
@@ -26,9 +30,13 @@ import com.example.profilecreation.ui.composeable.ProgressBar
 import com.example.profilecreation.ui.composeable.RippleButton
 import com.example.profilecreation.ui.composeable.Title
 import com.example.profilecreation.ui.signUp.PortfolioUi
+import com.ramcosta.composedestinations.annotation.Destination
 
+@Destination
 @Composable
-fun ConfirmationScreen(viewModel: ConfirmationViewModel) {
+fun ConfirmationScreen(
+    viewModel: ConfirmationViewModel = hiltViewModel(),
+) {
     val uiModelState = viewModel.uiModel.collectAsState(initial = UIModel.Loading)
 
     Surface {
@@ -51,7 +59,8 @@ fun ConfirmationScreenContent(portfolioUi: PortfolioUi) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(dimensionResource(R.dimen.margin_medium)),
+            .padding(dimensionResource(R.dimen.margin_medium))
+            .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.Top
     ) {
         Title(
@@ -65,6 +74,7 @@ fun ConfirmationScreenContent(portfolioUi: PortfolioUi) {
         Email(portfolioUi.emailFieldState.text)
         ClickableLinkText(portfolioUi.urlFieldState.text)
         Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.margin_extra_big)))
         RippleButton(stringResource(id = R.string.confirmation_sign_in)) {
             Toast.makeText(context, "Sign in pressed", Toast.LENGTH_SHORT).show()
         }

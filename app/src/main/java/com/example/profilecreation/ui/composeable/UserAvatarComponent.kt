@@ -15,7 +15,7 @@ import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,7 +31,7 @@ import com.example.profilecreation.R
 
 
 @Composable
-fun UserAvatarComponent(uriState: MutableState<String>, onAvatarClick: () -> Unit) {
+fun UserAvatarComponent(uriStr: State<String>, onAvatarClick: () -> Unit) {
     val ripple = rememberRipple()
 
     val dimensionInPixels =
@@ -47,7 +47,7 @@ fun UserAvatarComponent(uriState: MutableState<String>, onAvatarClick: () -> Uni
             .height(dimensionResource(id = R.dimen.sign_up_avatar_height))
             .wrapContentWidth(align = Alignment.CenterHorizontally)
     ) {
-        if (uriState.value.isEmpty()) {
+        if (uriStr.value.isEmpty()) {
             Box(
                 modifier = Modifier
                     .width(dimensionResource(id = R.dimen.sign_up_avatar_width))
@@ -71,7 +71,7 @@ fun UserAvatarComponent(uriState: MutableState<String>, onAvatarClick: () -> Uni
                 )
             }
         } else {
-            ImageComponent(uriState = uriState, onAvatarClick = onAvatarClick)
+            ImageComponent(uriStr, onAvatarClick)
         }
     }
 }

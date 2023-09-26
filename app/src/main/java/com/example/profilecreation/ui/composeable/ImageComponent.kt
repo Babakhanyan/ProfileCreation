@@ -1,5 +1,6 @@
 package com.example.profilecreation.ui.composeable
 
+import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -23,10 +24,10 @@ import com.example.profilecreation.R
 
 @Composable
 fun ImageComponent(
-    uriState: State<String>,
+    uriStr: State<String>,
     onAvatarClick: () -> Unit = {}
 ) {
-    if (uriState.value.isNotEmpty()) {
+    if (uriStr.value.isNotEmpty()) {
         val ripple = rememberRipple()
 
         Box(
@@ -42,7 +43,7 @@ fun ImageComponent(
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(uriState.value)
+                    .data(Uri.parse(uriStr.value))
                     .build(),
                 contentDescription = "icon",
                 contentScale = ContentScale.Inside,

@@ -16,6 +16,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.sp
 import com.example.profilecreation.R
@@ -29,6 +30,8 @@ fun Title(title: String) {
             color = colorResource(R.color.black_50_percent),
             fontSize = dimensionResource(id = R.dimen.title_text_size).value.sp,
             fontWeight = FontWeight.Bold,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
@@ -71,6 +74,8 @@ fun Name(name: String) {
             color = colorResource(R.color.black_50_percent),
             fontSize = dimensionResource(id = R.dimen.info_text_size).value.sp,
             fontWeight = FontWeight.Bold,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = dimensionResource(R.dimen.margin_medium))
@@ -88,6 +93,8 @@ fun Email(email: String) {
             color = colorResource(R.color.black_50_percent),
             fontSize = dimensionResource(id = R.dimen.info_text_size).value.sp,
             fontWeight = FontWeight.Bold,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = dimensionResource(R.dimen.margin_medium))
@@ -117,6 +124,8 @@ fun ClickableLinkText(url: String) {
             text = annotatedString,
             fontSize = dimensionResource(id = R.dimen.info_text_size).value.sp,
             fontWeight = FontWeight.Bold,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = dimensionResource(R.dimen.margin_medium))
