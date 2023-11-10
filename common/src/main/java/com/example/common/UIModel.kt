@@ -8,6 +8,6 @@ sealed class UIModel<out T : Any> {
 fun <T : Any> UIModel<T>.dataOrNull(): T? {
     return when (this) {
         is UIModel.Data -> data
-        UIModel.Loading -> null
+        else -> null
     }
 }

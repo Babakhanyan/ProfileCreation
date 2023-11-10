@@ -17,6 +17,7 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.VisualTransformation
 import com.example.profilecreation.ui.signUp.FieldState
 
 @Composable
@@ -25,6 +26,7 @@ fun CustomTextField(
     errorMessage: String,
     label: String,
     isLastTextField: Boolean = false,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
     onValueChange: (String) -> Unit,
 ) {
 
@@ -36,6 +38,7 @@ fun CustomTextField(
         textStyle = MaterialTheme.typography.bodyMedium,
         value = fieldState.value.text,
         onValueChange = onValueChange,
+        visualTransformation = visualTransformation,
         colors = TextFieldDefaults.colors(
             focusedContainerColor = Color.Transparent,
             unfocusedContainerColor = Color.Transparent,

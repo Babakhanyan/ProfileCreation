@@ -10,6 +10,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -17,9 +18,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.common.UIModel
-import com.example.common.dataOrNull
 import com.example.profilecreation.R
 import com.example.profilecreation.ui.composeable.CameraComponent
 import com.example.profilecreation.ui.composeable.CustomTextField
@@ -37,30 +38,30 @@ fun SignUpScreen(
     viewModel: SignUpViewModel = hiltViewModel(),
     destinationsNavigator: DestinationsNavigator,
 ) {
-    val navigateToDestination by viewModel.command.collectAsState(initial = null)
-    navigateToDestination?.let {
-        when (it) {
-            Command.OpenConfirmationPage -> {
+
+    val state by viewModel.state.collectAsState()
+
+    LaunchedEffect(state.navigationEvent) {
+        when (state.navigationEvent) {
+            NavigationEvent.NavigateToConfirmationPage -> {
                 destinationsNavigator.navigate(ConfirmationScreenDestination)
             }
+
+            NavigationEvent.None -> Unit
         }
+        viewModel.processIntent(ResetNavigation)
     }
 
-    val uiModelState = viewModel.uiModel.collectAsState(initial = UIModel.Loading)
-
     Surface {
-        when (uiModelState.value) {
-            is UIModel.Data -> SignUpScreenContent(viewModel)
+        when (val uiState = state.uiState) {
+            is UIModel.Data -> SignUpScreenContent(viewModel, uiState.data)
             UIModel.Loading -> ProgressBar()
         }
     }
 }
 
 @Composable
-fun SignUpScreenContent(viewModel: SignUpViewModel) {
-    val portfolioUi =
-        viewModel.uiModel.collectAsState(initial = UIModel.Loading).value.dataOrNull() ?: return
-
+fun SignUpScreenContent(viewModel: SignUpViewModel, portfolioUi: PortfolioUi) {
 
     val avatarState = remember(portfolioUi.avatarUri) {
         mutableStateOf(portfolioUi.avatarUri)
@@ -88,31 +89,34 @@ fun SignUpScreenContent(viewModel: SignUpViewModel) {
     ) {
         Title(title = stringResource(id = R.string.sign_up_title))
         Description(stringResource(id = R.string.sign_up_description))
-        CameraComponent(uriStr = avatarState) { viewModel.updateAvatar(it) }
+        CameraComponent(uriStr = avatarState) { viewModel.processIntent(UpdateUri(it)) }
         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.margin_medium)))
         CustomTextField(
             fieldState = firstNameFieldState,
             errorMessage = stringResource(id = R.string.error_required),
             label = stringResource(id = R.string.sign_up_placeholder_first_name),
-        ) { text -> viewModel.updateFirstName(text) }
+        ) { text -> viewModel.processIntent(UpdateFirstName(text)) }
         CustomTextField(
             fieldState = emailFieldState,
             errorMessage = stringResource(id = R.string.error_email_address),
             label = stringResource(id = R.string.sign_up_placeholder_email_address),
-        ) { text -> viewModel.updateEmailAddress(text) }
+        ) { text -> viewModel.processIntent(UpdateEmail(text)) }
         CustomTextField(
             fieldState = passwordFieldState,
             errorMessage = stringResource(id = R.string.error_password),
             label = stringResource(id = R.string.sign_up_placeholder_password),
-        ) { text -> viewModel.updatePassword(text) }
+            visualTransformation = PasswordVisualTransformation(),
+        ) { text -> viewModel.processIntent(UpdatePassword(text)) }
         CustomTextField(
             fieldState = urlFieldState,
             errorMessage = stringResource(id = R.string.error_url),
             label = stringResource(id = R.string.sign_up_placeholder_url),
             isLastTextField = true
-        ) { text -> viewModel.updateUrl(text) }
+        ) { text -> viewModel.processIntent(UpdateUrl(text)) }
         Spacer(modifier = Modifier.weight(1f))
         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.margin_extra_big)))
-        RippleButton(text = stringResource(id = R.string.sign_up_submit)) { viewModel.submit() }
+        RippleButton(text = stringResource(id = R.string.sign_up_submit)) {
+            viewModel.processIntent(Submit)
+        }
     }
 }

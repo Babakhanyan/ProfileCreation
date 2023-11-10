@@ -12,6 +12,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -37,10 +38,10 @@ import com.ramcosta.composedestinations.annotation.Destination
 fun ConfirmationScreen(
     viewModel: ConfirmationViewModel = hiltViewModel(),
 ) {
-    val uiModelState = viewModel.uiModel.collectAsState(initial = UIModel.Loading)
+    val state by viewModel.state.collectAsState()
 
     Surface {
-        when (val portfolioUi = uiModelState.value) {
+        when (val portfolioUi = state.uiState) {
             is UIModel.Data -> ConfirmationScreenContent(portfolioUi.data)
             UIModel.Loading -> ProgressBar()
         }

@@ -7,11 +7,10 @@ import com.example.data.UserService
 import com.example.profilecreation.ui.signUp.PortfolioUi
 import com.example.profilecreation.uiMapper.PortfolioUiMapper
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -20,9 +19,24 @@ class ConfirmationViewModel @Inject constructor(
     portfolioUiMapper: PortfolioUiMapper,
 ) : ViewModel() {
 
-    private val _uiModel: StateFlow<UIModel<PortfolioUi>> =
-        userService.getPortfolio().map { UIModel.Data(portfolioUiMapper.mapToUi(it)) }
-            .stateIn(viewModelScope, SharingStarted.Eagerly, UIModel.Loading)
+    private val _state = MutableStateFlow(ConfirmationState())
+    val state: StateFlow<ConfirmationState> = _state
 
-    val uiModel: Flow<UIModel<PortfolioUi>> = _uiModel
+    init {
+        viewModelScope.launch {
+            _state.emit(
+                ConfirmationState(
+                    UIModel.Data(
+                        portfolioUiMapper.mapToUi(
+                            userService.getPortfolio().first()
+                        )
+                    )
+                )
+            )
+        }
+    }
 }
+
+data class ConfirmationState(
+    val uiState: UIModel<PortfolioUi> = UIModel.Loading,
+)

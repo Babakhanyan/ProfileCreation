@@ -6,6 +6,8 @@ import com.example.common.dataOrNull
 import com.example.data.UserService
 import com.example.fake.getFakePortfolio
 import com.example.profilecreation.ui.signUp.SignUpViewModel
+import com.example.profilecreation.ui.signUp.UpdateFirstName
+import com.example.profilecreation.uiMapper.PortfolioUiMapper
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flowOf
@@ -20,7 +22,7 @@ internal class SignUpViewModelTest {
     val coroutinesTestRule = MainDispatcherRule()
 
     @Test
-    fun `Check uiModel when viewModel created`() = runTest {
+    fun `Check viewModel uiState when viewModel created`() = runTest {
 
         val service: UserService = mockk(relaxed = true)
 
@@ -28,27 +30,32 @@ internal class SignUpViewModelTest {
 
         every { service.getPortfolio() } returns flowOf(expectedPortfolio)
 
-        val viewModel = SignUpViewModel(service)
+        val viewModel = SignUpViewModel(service, PortfolioUiMapper())
 
-        viewModel.uiModel.test {
-            Assert.assertEquals(awaitItem().dataOrNull(), expectedPortfolio)
+        val expectedPortfolioUi = PortfolioUiMapper().mapToUi(expectedPortfolio)
+
+        viewModel.state.test {
+            Assert.assertEquals(awaitItem().uiState.dataOrNull(), expectedPortfolioUi)
         }
     }
 
     @Test
-    fun `Check uiModel after called updateFirstName`() = runTest {
+    fun `Check viewModel uiState after called intent UpdateFirstName`() = runTest {
+
+        val expectedName = "Anna"
 
         val service: UserService = mockk(relaxed = true)
         every { service.getPortfolio() } returns flowOf(getFakePortfolio(firstName = "John"))
 
-        val viewModel = SignUpViewModel(service)
+        val viewModel = SignUpViewModel(service, PortfolioUiMapper())
 
-        viewModel.updateFirstName("Anna")
+        viewModel.processIntent(UpdateFirstName(expectedName))
 
-        val expectedPortfolio = getFakePortfolio(firstName = "Anna")
+        val expectedPortfolioUi =
+            PortfolioUiMapper().mapToUi(getFakePortfolio(firstName = expectedName))
 
-        viewModel.uiModel.test {
-            Assert.assertEquals(awaitItem().dataOrNull(), expectedPortfolio)
+        viewModel.state.test {
+            Assert.assertEquals(awaitItem().uiState.dataOrNull(), expectedPortfolioUi)
         }
     }
 }
